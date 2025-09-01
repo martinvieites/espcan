@@ -1,0 +1,58 @@
+services:
+  esp32can:
+    build:
+      context: .
+    ports:
+      - 5000:5000
+    depends_on:
+      - influxdb2
+      - mosquitto
+
+  influxdb2:
+    image: influxdb:2
+    ports:
+      - 8086:8086
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: KCP0qPvVOypcJkNPLTV_9moRaqRCU-VZueqytjmiOKbA90uHsGZNRXZoUU0EBCfxLOvlO73ywQJXjWBHSufIDQ==
+      DOCKER_INFLUXDB_INIT_ORG: home
+      DOCKER_INFLUXDB_INIT_BUCKET: obd2
+      DOCKER_INFLUXDB_INIT_USERNAME: admin
+      DOCKER_INFLUXDB_INIT_PASSWORD: securepassword
+    volumes:
+      - type: volume
+        source: influxdb2-data
+        target: /var/lib/influxdb2
+      - type: volume
+        source: influxdb2-config
+        target: /etc/influxdb2
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - '3000:3000'
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/docs:/var/lib/grafana/dashboards
+      - type: volume
+        source: grafana-data
+        target: /var/lib/grafana
+
+  mosquitto:
+    image: eclipse-mosquitto
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    ports:
+      - 1883:1883
+    stdin_open: true
+    tty: true
+
+volumes:
+  influxdb2-data:
+  influxdb2-config:
+  grafana-data:

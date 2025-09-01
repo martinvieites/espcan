@@ -1,0 +1,34 @@
+{% extends 'base.html' %} {% block content %}
+<body>
+    <div class="container">
+        {% for device in devices %}
+        <article>
+            <header>
+                <b
+                    >{{ device.identifier }} {% if device.vin %} [
+                    {{device.vin}} ] {% endif %}</b
+                >
+            </header>
+            <div class="container">
+                <p>
+                    {% if device.status == 1 %} 🟢 Conectado <br />{% elif
+                    device.status == 0 %} 🔴 Desconectado <br />{% else %} ⚫
+                    Desconocido <br />{% endif %}
+                </p>
+                <p>
+                    {% if device.monitoring == 1 %} ▶️ Monitorización activada
+                    {% else %} ⏸️ Monitorización desactivada {% endif %}
+                </p>
+            </div>
+            <footer>
+                <div class="grid">
+                    <a href="{{ device.identifier }}/dtc">DTC</a>
+                    <a href="{{ device.identifier }}/pids">PIDs</a>
+                    <a href="{{ device.identifier }}/monitor">Monitor</a>
+                </div>
+            </footer>
+        </article>
+        {% endfor %}
+    </div>
+</body>
+{% endblock %}

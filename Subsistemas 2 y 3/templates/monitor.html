@@ -1,0 +1,36 @@
+{% extends 'base.html' %} {% block content %}
+
+<body>
+    <div class="container">
+        <article>
+            {% if dongle.monitoring == 0 %}
+            <form method="post">
+                <fieldset>
+                    <legend><strong>Avaliable PIDS</strong></legend>
+                    {% for pid in pids_list %}
+                    <label for="{{ pid.id }}">
+                        <input
+                            type="checkbox"
+                            id="{{ pid.id }}"
+                            name="{{ pid.id }}"
+                        />
+                        {{ pid.info }}
+                    </label>
+                    {% endfor %}
+                    <input type="submit" value="Comenzar monitorización" />
+                </fieldset>
+            </form>
+            {% endif %} {% if dongle.monitoring == 1 %}
+            <form method="post" action="/{{ dongle.identifier }}/monitor/stop">
+                <input
+                    class="secondary"
+                    type="submit"
+                    value="Parar monitorización"
+                />
+            </form>
+            {% endif %}
+        </article>
+    </div>
+</body>
+
+{% endblock %}
